@@ -3996,6 +3996,7 @@ var TRawRenderPassDataResult = module.exports.TRawRenderPassDataResult = functio
   this.row_ids_A = null;
   this.row_ids_B = null;
   this.table_ids = null;
+  this.accum_data = null;
   if (args) {
     if (args.num_channels !== undefined && args.num_channels !== null) {
       this.num_channels = args.num_channels;
@@ -4011,6 +4012,9 @@ var TRawRenderPassDataResult = module.exports.TRawRenderPassDataResult = functio
     }
     if (args.table_ids !== undefined && args.table_ids !== null) {
       this.table_ids = args.table_ids;
+    }
+    if (args.accum_data !== undefined && args.accum_data !== null) {
+      this.accum_data = args.accum_data;
     }
   }
 };
@@ -4063,6 +4067,13 @@ TRawRenderPassDataResult.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 6:
+      if (ftype == Thrift.Type.STRING) {
+        this.accum_data = input.readBinary();
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -4097,6 +4108,11 @@ TRawRenderPassDataResult.prototype.write = function(output) {
   if (this.table_ids !== null && this.table_ids !== undefined) {
     output.writeFieldBegin('table_ids', Thrift.Type.STRING, 5);
     output.writeBinary(this.table_ids);
+    output.writeFieldEnd();
+  }
+  if (this.accum_data !== null && this.accum_data !== undefined) {
+    output.writeFieldBegin('accum_data', Thrift.Type.STRING, 6);
+    output.writeBinary(this.accum_data);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
