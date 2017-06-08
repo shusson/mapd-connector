@@ -43,6 +43,7 @@ class MapdCon {
     this.DEFAULT_QUERY_TIME = 50
     this.NUM_PINGS_PER_SERVER = 4
     this.importerRowDesc = null
+    this._conId = 0
 
     // invoke initialization methods
     this.invertDatumTypes()
@@ -490,7 +491,11 @@ class MapdCon {
 
     const curNonce = (this._nonce++).toString()
 
-    const conId = 0
+    this._conId++
+    if (this._conId > this._numConnections - 1) {
+      this._conId = 0
+    }
+    const conId = this._conId
 
     const processResultsOptions = {
       returnTiming,

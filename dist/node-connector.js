@@ -25587,6 +25587,7 @@ module.exports =
 	    this.DEFAULT_QUERY_TIME = 50;
 	    this.NUM_PINGS_PER_SERVER = 4;
 	    this.importerRowDesc = null;
+	    this._conId = 0;
 
 	    // invoke initialization methods
 	    this.invertDatumTypes();
@@ -26014,7 +26015,11 @@ module.exports =
 
 	      var curNonce = (this._nonce++).toString();
 
-	      var conId = 0;
+	      this._conId++;
+	      if (this._conId > this._numConnections - 1) {
+	        this._conId = 0;
+	      }
+	      var conId = this._conId;
 
 	      var processResultsOptions = {
 	        returnTiming: returnTiming,

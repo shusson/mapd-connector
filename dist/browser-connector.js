@@ -295,6 +295,7 @@
 	    this.DEFAULT_QUERY_TIME = 50;
 	    this.NUM_PINGS_PER_SERVER = 4;
 	    this.importerRowDesc = null;
+	    this._conId = 0;
 
 	    // invoke initialization methods
 	    this.invertDatumTypes();
@@ -722,7 +723,11 @@
 
 	      var curNonce = (this._nonce++).toString();
 
-	      var conId = 0;
+	      this._conId++;
+	      if (this._conId > this._numConnections - 1) {
+	        this._conId = 0;
+	      }
+	      var conId = this._conId;
 
 	      var processResultsOptions = {
 	        returnTiming: returnTiming,
@@ -13473,10 +13478,6 @@
 	process.removeListener = noop;
 	process.removeAllListeners = noop;
 	process.emit = noop;
-	process.prependListener = noop;
-	process.prependOnceListener = noop;
-
-	process.listeners = function (name) { return [] }
 
 	process.binding = function (name) {
 	    throw new Error('process.binding is not supported');
@@ -17734,10 +17735,8 @@
 	}
 
 	ClientRequest.prototype.getHeader = function (name) {
-		var header = this._headers[name.toLowerCase()]
-		if (header)
-			return header.value
-		return null
+		var self = this
+		return self._headers[name.toLowerCase()].value
 	}
 
 	ClientRequest.prototype.removeHeader = function (name) {
